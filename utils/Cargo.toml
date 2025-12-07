@@ -14,7 +14,7 @@ autotests    = false
 [dependencies.embassy-stm32]
 version = "0.4"
 ### Only chips of the same model can be used at the same time
-features = ["defmt", "single-bank", "time-driver-any", "{{chip_l}}", "memory-x"]
+features = ["defmt", "single-bank", "time-driver-any", "stm32h723vg"]
 
 
 [dependencies]

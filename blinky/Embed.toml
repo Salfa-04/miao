@@ -1,5 +1,5 @@
 [default]
-general.chip = "{{ chip_u }}"
+general.chip = "STM32H723VG"
 
 probe.speed    = 10000
 probe.protocol = "Swd"
@@ -16,5 +16,5 @@ rtt.enabled = true
 # mode       - NoBlockSkip/NoBlockTrim/BlockIfFull
 # format     - String/Defmt/BinaryLE
 rtt.up_channels = [
-    { channel = 0, log_format = "{s}", socket = "{{ rtt_server }}", mode = "NoBlockTrim", format = "Defmt", show_location = false, show_timestamps = false },
+    { channel = 0, log_format = "{s}", socket = "127.0.0.1:1008", mode = "NoBlockTrim", format = "Defmt", show_location = false, show_timestamps = false },
 ]

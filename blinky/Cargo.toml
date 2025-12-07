@@ -1,5 +1,5 @@
 [package]
-name  = "{{ crate_name }}"
+name  = "blinky"
 build = "build.rs"
 
 authors.workspace = true

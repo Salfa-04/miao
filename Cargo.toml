@@ -4,10 +4,10 @@ resolver = "3"
 package.version = "0.0.0"
 package.edition = "2024"
 package.publish = false
-package.authors = ["{{ authors }}"]
+package.authors = ["Salfa Chang <me@salfa.cc>"]
 default-members = ["utils"]
 
-members = ["utils", "{{ crate_name }}"]
+members = ["utils", "blinky"]
 
 
 [profile]

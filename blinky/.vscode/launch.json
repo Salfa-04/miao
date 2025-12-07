@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "Probe-rs Debug",
             "cwd": "${workspaceFolder}",
-            "chip": "{{ chip_u }}",
+            "chip": "STM32H723VG",
             "wireProtocol": "Swd",
             "flashingConfig": {
                 "flashingEnabled": true,
@@ -20,7 +20,7 @@
                 {
                     "coreIndex": 0,
                     "rttEnabled": true,
-                    "programBinary": "../target/{{ target }}/debug/${fileWorkspaceFolderBasename}",
+                    "programBinary": "../target/thumbv7em-none-eabihf/debug/${fileWorkspaceFolderBasename}",
                 }
             ],
             "connectUnderReset": false,
@@ -35,7 +35,7 @@
             "runToEntryPoint": "main",
             "showDevDebugOutput": "vscode",
             "interface": "swd",
-            "executable": "../target/{{ target }}/debug/${fileWorkspaceFolderBasename}",
+            "executable": "../target/thumbv7em-none-eabihf/debug/${fileWorkspaceFolderBasename}",
             "configFiles": [
                 "${workspaceRoot}/../openocd.cfg"
             ],

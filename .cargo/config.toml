@@ -1,5 +1,5 @@
 [env]
-PROBE_RS_CHIP = "{{ chip_u }}"
+PROBE_RS_CHIP = "STM32H723VG"
 
 PROBE_RS_SPEED    = "10000" # in kHz
 PROBE_RS_PROTOCOL = "swd"   # swd or jtag
@@ -17,7 +17,7 @@ x  = "rr --"
 
 
 [build]
-target = "{{ target }}"
+target = "thumbv7em-none-eabihf"
 rustflags = [
     "-Clinker-plugin-lto",
     "-Clink-arg=--nmagic",
