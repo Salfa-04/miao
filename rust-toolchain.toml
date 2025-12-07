@@ -1,0 +1,8 @@
+[toolchain]
+channel = "stable"
+profile = "minimal"
+
+targets = ["{{ target }}"]
+
+# llvm-tools: doas pacman -S cargo-binutils
+components = ["rust-src", "rustfmt", "llvm-tools"]

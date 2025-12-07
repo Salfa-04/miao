@@ -1,0 +1,43 @@
+[package]
+name = "utils"
+
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+autobenches  = false
+autoexamples = false
+autotests    = false
+
+
+[dependencies.embassy-stm32]
+version = "0.4"
+### Only chips of the same model can be used at the same time
+features = ["defmt", "single-bank", "time-driver-any", "{{chip_l}}", "memory-x"]
+
+
+[dependencies]
+
+static_cell = "2.1"
+
+defmt.workspace = true
+embassy-futures = "0.1"
+bitfield-struct = "0.12"
+
+portable-atomic = { version = "1", features = ["float"] }
+defmt-rtt       = { version = "1.0", features = ["disable-blocking-mode"] }
+embassy-sync    = { version = "0.7", features = ["defmt"] }
+embassy-time    = { version = "0.5", features = ["defmt", "tick-hz-32_768"] }
+panic-probe     = { version = "1.0", features = ["print-defmt"] }
+
+[dependencies.cortex-m]
+version  = "0.7"
+features = ["critical-section-single-core", "linker-plugin-lto", "inline-asm"]
+
+
+[dependencies.circular-buffer]
+version  = "1.2"
+features = ["embedded-io", "embedded-io-async"]
+
+default-features = false

@@ -1,0 +1,44 @@
+[env]
+PROBE_RS_CHIP = "{{ chip_u }}"
+
+PROBE_RS_SPEED    = "10000" # in kHz
+PROBE_RS_PROTOCOL = "swd"   # swd or jtag
+
+# LOG: trace, debug, info, warn, error
+DEFMT_LOG              = "trace"
+DEFMT_RTT_BUFFER_SIZE  = "1024"
+CARGO_REGISTRY_DEFAULT = "rsproxy"
+
+
+[alias]
+rr = "r -r"
+br = "b -r"
+x  = "rr --"
+
+
+[build]
+target = "{{ target }}"
+rustflags = [
+    "-Clinker-plugin-lto",
+    "-Clink-arg=--nmagic",
+    "-Clink-arg=-Tlink.x",
+    "-Clink-arg=-Tdefmt.x",
+    # "-Cforce-frame-pointers",
+    # "-Zmacro-backtrace",
+]
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# linker = "rust-lld"
+runner = [
+    "probe-rs",
+    # or `attach`
+    "run",
+    "--preverify",
+    "--no-location",
+    "--no-catch-reset",
+    "--no-catch-hardfault",
+    "--always-print-stacktrace",
+    # "--rtt-scan-memory",
+    # "--connect-under-reset",
+    # "--log-format", "{L} {s}",
+]

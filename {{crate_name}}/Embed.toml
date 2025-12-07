@@ -1,0 +1,20 @@
+[default]
+general.chip = "{{ chip_u }}"
+
+probe.speed    = 10000
+probe.protocol = "Swd"
+# probe.usb_vid  = "1337"
+# probe.usb_pid  = "1337"
+# probe.serial   = "12345678"
+flashing.enabled = false
+
+general.connect_under_reset = false
+
+
+rtt.enabled = true
+# object key - RTT channel identifier number
+# mode       - NoBlockSkip/NoBlockTrim/BlockIfFull
+# format     - String/Defmt/BinaryLE
+rtt.up_channels = [
+    { channel = 0, log_format = "{s}", socket = "{{ rtt_server }}", mode = "NoBlockTrim", format = "Defmt", show_location = false, show_timestamps = false },
+]

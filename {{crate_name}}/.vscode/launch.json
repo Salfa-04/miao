@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "probe-rs-debug",
+            "request": "launch",
+            "name": "Probe-rs Debug",
+            "cwd": "${workspaceFolder}",
+            "chip": "{{ chip_u }}",
+            "wireProtocol": "Swd",
+            "flashingConfig": {
+                "flashingEnabled": true,
+                "haltAfterReset": true,
+                "fullChipErase": false,
+                "formatOptions": {
+                    "binaryFormat": "elf"
+                }
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex": 0,
+                    "rttEnabled": true,
+                    "programBinary": "../target/{{ target }}/debug/${fileWorkspaceFolderBasename}",
+                }
+            ],
+            "connectUnderReset": false,
+            "consoleLogLevel": "Console",
+        },
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "OpenOCD Debug",
+            "cwd": "${workspaceRoot}",
+            "servertype": "openocd",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "vscode",
+            "interface": "swd",
+            "executable": "../target/{{ target }}/debug/${fileWorkspaceFolderBasename}",
+            "configFiles": [
+                "${workspaceRoot}/../openocd.cfg"
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            }
+        },
+    ]
+}
