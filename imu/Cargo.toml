@@ -1,0 +1,26 @@
+[package]
+name  = "imu"
+build = "build.rs"
+
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+autobenches  = false
+autoexamples = false
+autotests    = false
+
+
+[dependencies]
+
+utils.workspace = true
+defmt.workspace = true
+
+cortex-m-rt.workspace      = true
+assign-resources.workspace = true
+embassy-executor.workspace = true
+
+
+[build-dependencies]
+cargo-emit = "0.2"
