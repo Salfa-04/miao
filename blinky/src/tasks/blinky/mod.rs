@@ -5,7 +5,7 @@
 use crate::{hal, system::*};
 use hal::gpio::{Pull, Speed};
 use hal::spi::{BitOrder, Config, MODE_0, Spi};
-use hal::time::khz;
+use hal::time::mhz;
 
 const SPEED: f32 = 0.3;
 
@@ -16,7 +16,7 @@ pub async fn task(p: BlinkySrc) -> ! {
     let mut config = Config::default();
     config.mode = MODE_0;
     config.bit_order = BitOrder::LsbFirst;
-    config.frequency = khz(6400);
+    config.frequency = mhz(12);
     config.miso_pull = Pull::None;
     config.gpio_speed = Speed::Medium;
 
@@ -37,14 +37,14 @@ pub async fn task(p: BlinkySrc) -> ! {
 
 /// # Calculate WS2812 Data Buffer
 /// Prepares the data buffer for WS2812 LED based on RGB values.
-fn ws2812_calc<'t>(r: u8, g: u8, b: u8) -> &'t [u8] {
+fn ws2812_calc<'t>(r: u8, g: u8, b: u8) -> &'t [u16] {
     /// Safety: **Only called in Single-Threaded Context.**
     #[unsafe(link_section = ".sram4.blinky")]
-    static mut BUFFER: [u8; 25] = [0; _];
+    static mut BUFFER: [u16; 25] = [0; _];
     let buf = &raw mut BUFFER;
 
-    const N0: u8 = 0b1110_0000; // bit 0
-    const N1: u8 = 0b1111_1000; // bit 1
+    const N0: u16 = 0b1111_0000_0000_0000; // bit 0
+    const N1: u16 = 0b1111_1111_1100_0000; // bit 1
 
     let mut temp = [0; _];
     for i in 0..8 {

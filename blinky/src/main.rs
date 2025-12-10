@@ -19,16 +19,6 @@ async fn entry(s: embassy_executor::Spawner) {
         split_resources!(p)
     };
 
-    {
-        let mut scb = _c.SCB;
-        scb.enable_icache();
-
-        use utils::peripheral::SCB;
-        let a = SCB::dcache_enabled();
-        let b = SCB::icache_enabled();
-        defmt::info!("DCACHE: {}, ICACHE: {}", a, b,);
-    }
-
     s.must_spawn(tasks::health::task());
 
     s.must_spawn(tasks::blinky::task(r.blinky));

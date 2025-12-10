@@ -4,7 +4,8 @@
 
 use crate::prelude::{hal, ll};
 use hal::{Config, Peripherals, init, rcc, time::mhz};
-use ll::{Peripherals as CorePeripherals, singleton};
+use ll::Peripherals as CorePeripherals;
+use ll::{peripheral::SCB, singleton};
 
 // __pre_init function to be called before main
 core::arch::global_asm! {
@@ -52,8 +53,15 @@ pub fn sys_init() -> (CorePeripherals, Peripherals) {
         panic!("Can Be Called Only Once!!!");
     }
 
-    let Some(core) = CorePeripherals::take() else {
-        panic!("Failed to take Core Peripherals!!!");
+    let core = match CorePeripherals::take() {
+        Some(mut x) => {
+            x.SCB.enable_icache();
+            let i = SCB::icache_enabled();
+            let d = SCB::dcache_enabled();
+            defmt::trace!("icache: {}, dcache: {}", i, d);
+            x
+        }
+        None => panic!("Failed to take Core Peripherals!!!"),
     };
 
     let peripherals = {
@@ -76,26 +84,19 @@ pub fn sys_init() -> (CorePeripherals, Peripherals) {
             prediv: rcc::PllPreDiv::DIV3,  //   8Mhz
             mul: rcc::PllMul::MUL65,       // 520Mhz
             divp: Some(rcc::PllDiv::DIV1), // 520Mhz
-            divq: None,                    //
+            divq: Some(rcc::PllDiv::DIV4), // 130Mhz
             divr: None,                    //
         });
 
-        rcc.pll2 = Some(rcc::Pll {
-            source: rcc::PllSource::HSE,   //  24Mhz
-            prediv: rcc::PllPreDiv::DIV8,  //   3Mhz
-            mul: rcc::PllMul::MUL278,      // 834Mhz
-            divp: None,                    //
-            divq: Some(rcc::PllDiv::DIV4), // 208.5Mhz
-            divr: None,                    //
-        });
+        rcc.pll2 = None; // Disabled
 
         rcc.pll3 = Some(rcc::Pll {
-            source: rcc::PllSource::HSE,   //    24Mhz
-            prediv: rcc::PllPreDiv::DIV5,  //   4.8Mhz
-            mul: rcc::PllMul::MUL52,       // 249.6Mhz
-            divp: None,                    //
-            divq: Some(rcc::PllDiv::DIV2), // 124.8Mhz
-            divr: None,                    //
+            source: rcc::PllSource::HSE,    //  24Mhz
+            prediv: rcc::PllPreDiv::DIV4,   //   6Mhz
+            mul: rcc::PllMul::MUL125,       // 750Mhz
+            divp: Some(rcc::PllDiv::DIV10), //  75Mhz
+            divq: Some(rcc::PllDiv::DIV6),  // 125Mhz
+            divr: Some(rcc::PllDiv::DIV5),  // 150Mhz
         });
 
         rcc.sys = rcc::Sysclk::PLL1_P; // 520Mhz
@@ -115,8 +116,15 @@ pub fn sys_init() -> (CorePeripherals, Peripherals) {
         );
 
         let mux = &mut rcc.mux;
-        mux.spi6sel = rcc::mux::Spi6sel::PLL2_Q; // 208.5Mhz
-        mux.usbsel = rcc::mux::Usbsel::PLL3_Q; // 124.8MHz
+        mux.spi123sel = rcc::mux::Saisel::PLL3_P; // 75Mhz
+        mux.usart234578sel = rcc::mux::Usart234578sel::PLL3_Q; // 125Mhz
+        mux.usart16910sel = rcc::mux::Usart16910sel::PLL3_Q; // 125Mhz
+        mux.rngsel = rcc::mux::Rngsel::PLL1_Q; // 130Mhz
+        mux.spi6sel = rcc::mux::Spi6sel::HSE; // 24Mhz
+        mux.octospisel = rcc::mux::Fmcsel::HCLK3; // 260MHz
+        mux.adcsel = rcc::mux::Adcsel::PLL3_R; // 150Mhz
+        mux.fdcansel = rcc::mux::Fdcansel::PLL1_Q; // 130Mhz
+        mux.usbsel = rcc::mux::Usbsel::PLL3_Q; // 125Mhz
 
         init(config) // SysClock = 520MHz
     };
