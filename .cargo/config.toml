@@ -6,7 +6,7 @@ PROBE_RS_PROTOCOL = "swd"   # swd or jtag
 
 # LOG: trace, debug, info, warn, error
 DEFMT_LOG              = "trace"
-DEFMT_RTT_BUFFER_SIZE  = "1024"
+DEFMT_RTT_BUFFER_SIZE  = "10240"
 CARGO_REGISTRY_DEFAULT = "rsproxy"
 
 

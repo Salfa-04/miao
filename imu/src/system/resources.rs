@@ -32,18 +32,20 @@ assign_resources! {
 
     bat: BatSrc {
         adc_p: ADC1,
-        vbat: PC4, // IN4 x11
+        vbat: PC4, // IN4 /11
         dma: DMA1_CH7,
+
         power_5v_en: PC15,
         power_up_en: PC14,
         power_down_en: PC13,
+
         user_key: PA15,
     }
 
     sbus: SbusSrc {
         uart_p: UART5,
         uart_rx: PD2,
-        dma_rx: DMA2_CH7,
+        dma: DMA2_CH7,
     }
 
     flash: FlashSrc {
@@ -61,6 +63,7 @@ assign_resources! {
         tim1_p: TIM1,
         pwm_1: PE13, // CH3
         pwm_2: PE9, // CH1
+
         tim2_p: TIM2,
         pwm_3: PA2, // CH3
         pwm_4: PA0, // CH1
@@ -87,10 +90,17 @@ assign_resources! {
         spi_miso: PC2,
         dma_rx: DMA1_CH0,
         dma_tx: DMA2_CH0,
+
         heat_p: TIM3,
         heat_pin: PB1, // CH4
-        imu_cs0: PC0,
-        imu_cs1: PC3,
+
+        acc_int: PE10,
+        acc_exti: EXTI10,
+        acc_cs: PC0,
+
+        gyro_int: PE12,
+        gyro_exti: EXTI12,
+        gyro_cs: PC3,
     }
 
     uart1: Uart1Src {

@@ -89,8 +89,10 @@ assign_resources! {
         dma_tx: DMA2_CH0,
         heat_p: TIM3,
         heat_pin: PB1, // CH4
-        imu_cs0: PC0,
-        imu_cs1: PC3,
+        accel_int: PE10,
+        accel_cs: PC0,
+        gyro_int: PE12,
+        gyro_cs: PC3,
     }
 
     uart1: Uart1Src {
