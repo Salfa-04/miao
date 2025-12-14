@@ -4,8 +4,7 @@
 
 use crate::prelude::{hal, ll};
 use hal::{Config, Peripherals, init, rcc, time::mhz};
-use ll::Peripherals as CorePeripherals;
-use ll::{peripheral::SCB, singleton};
+use ll::{Peripherals as CorePeripherals, peripheral::SCB};
 
 // __pre_init function to be called before main
 core::arch::global_asm! {
@@ -49,11 +48,8 @@ core::arch::global_asm! {
 pub fn sys_init() -> (CorePeripherals, Peripherals) {
     defmt::debug!("System Initialization...");
 
-    if singleton!(:()=()).is_none() {
-        panic!("Can Be Called Only Once!!!");
-    }
-
     let core = match CorePeripherals::take() {
+        None => panic!("{}: Can Be Called Only Once!!!", file!()),
         Some(mut x) => {
             x.SCB.enable_icache();
             let i = SCB::icache_enabled();
@@ -61,7 +57,6 @@ pub fn sys_init() -> (CorePeripherals, Peripherals) {
             defmt::trace!("icache: {}, dcache: {}", i, d);
             x
         }
-        None => panic!("Failed to take Core Peripherals!!!"),
     };
 
     let peripherals = {

@@ -37,6 +37,8 @@ impl SysMode {
     ///
     /// Retrieve the current system mode.
     ///
+
+    #[inline]
     pub fn get() -> SysMode {
         SysMode::from_bits(STATUS.load(Order))
     }
@@ -46,6 +48,7 @@ impl SysMode {
     ///
     /// Set the current system mode to the specified value.
     ///
+    #[inline]
     pub fn set(self) {
         STATUS.store(self.into_bits(), Order);
     }

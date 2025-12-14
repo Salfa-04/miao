@@ -19,9 +19,9 @@ features = ["defmt", "single-bank", "time-driver-tim8", "stm32h723vg", "exti"]
 
 [dependencies]
 
-static_cell = "2.1"
-
 defmt.workspace = true
+
+static_cell     = "2.1"
 embassy-futures = "0.1"
 bitfield-struct = "0.12"
 
@@ -34,10 +34,3 @@ panic-probe     = { version = "1.0", features = ["print-defmt"] }
 [dependencies.cortex-m]
 version  = "0.7"
 features = ["critical-section-single-core", "linker-plugin-lto", "inline-asm"]
-
-
-[dependencies.circular-buffer]
-version  = "1.2"
-features = ["embedded-io", "embedded-io-async"]
-
-default-features = false

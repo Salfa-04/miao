@@ -14,9 +14,9 @@ autotests    = false
 
 [dependencies]
 
-libm = "0.2"
+libm = { version = "0.2", default-features = false }
+ahrs = { version = "0.8", default-features = false }
 
-ahrs     = { version = "0.8", default-features = false }
 nalgebra = { version = "0.34", features = ["defmt"], default-features = false }
 
 utils.workspace = true

@@ -1,22 +1,15 @@
-use crate::{ef::select, hal, system::*};
+use crate::{hal, system::*};
 use gpio::{Level, Output as OP, Pull, Speed};
 use hal::{exti::ExtiInput, gpio, mode::Async, spi, time::mhz};
-use select::{Either, select};
 use spi::{BitOrder, Config, MODE_3, Spi};
 
 const WAIT_IV: u64 = 150; // us
 const WAIT_RESET: u64 = 50; // ms
 
-#[derive(defmt::Format, Debug)]
-pub enum WaitInt {
-    Gyro,
-    Acc,
-}
-
 pub struct BMI088<'t> {
     imu: Spi<'t, Async>,
     acc_cs: OP<'t>,
-    acc_int: ExtiInput<'t>,
+    // acc_int: ExtiInput<'t>,
     gyro_cs: OP<'t>,
     gyro_int: ExtiInput<'t>,
     buffer: &'static mut [u8],
@@ -28,7 +21,7 @@ impl BMI088<'_> {
             panic!("BMI088 Buffer Size MUST be at Least 8 Bytes");
         }
 
-        let acc_int = ExtiInput::new(p.acc_int, p.acc_exti, Pull::Up);
+        // let acc_int = ExtiInput::new(p.acc_int, p.acc_exti, Pull::Up);
         let gyro_int = ExtiInput::new(p.gyro_int, p.gyro_exti, Pull::Up);
         let acc_cs = OP::new(p.acc_cs, Level::High, Speed::VeryHigh);
         let gyro_cs = OP::new(p.gyro_cs, Level::High, Speed::VeryHigh);
@@ -47,7 +40,6 @@ impl BMI088<'_> {
         Self {
             imu,
             acc_cs,
-            acc_int,
             gyro_cs,
             gyro_int,
             buffer,
@@ -57,30 +49,16 @@ impl BMI088<'_> {
 
 impl BMI088<'_> {
     pub async fn init(&mut self) -> bool {
-        let gyro = self.init_gyro().await;
         let acc = self.init_acc().await;
+        utils::T::after_millis(WAIT_IV).await;
+        let gyro = self.init_gyro().await;
+        utils::T::after_millis(WAIT_IV).await;
         gyro && acc // OK for true
     }
 
     #[inline]
-    pub fn wait_new_gyro(&mut self) -> impl Future<Output = ()> {
+    pub fn wait_new_data(&mut self) -> impl Future<Output = ()> {
         self.gyro_int.wait_for_falling_edge()
-    }
-
-    #[inline]
-    pub fn wait_new_acc(&mut self) -> impl Future<Output = ()> {
-        self.acc_int.wait_for_falling_edge()
-    }
-
-    pub async fn wait(&mut self) -> WaitInt {
-        let acc = self.acc_int.wait_for_falling_edge();
-        let gyro = self.gyro_int.wait_for_falling_edge();
-        let result = select(acc, gyro).await;
-
-        match result {
-            Either::First(_) => WaitInt::Acc,
-            Either::Second(_) => WaitInt::Gyro,
-        }
     }
 }
 
@@ -180,9 +158,6 @@ impl BMI088<'_> {
             if self.read_reg_gyro(reg).await != val {
                 return false;
             }
-
-            // let v = self.read_reg_gyro(reg).await;
-            // defmt::info!("BMI088 GYRO REG {}({}): {}", reg, val, v);
         }
 
         true
@@ -202,13 +177,15 @@ impl BMI088<'_> {
             return false;
         }
 
+        // Configure Interrupts INT1 (Optional)
+        // (0x53, 0x0C), // INT1_IO_CONF: Output, Open-Drain, Active Low
+        // (0x58, 0x04), // INT1_INT2_MAP_DATA: Data Ready Interrupt to INT1
+
         for (reg, val) in [
             (0x7D, 0x04), // ACC_PWR_CTRL: Enable Accelerometer
             (0x7C, 0x00), // ACC_PWR_CONF: Active Mode
             (0x40, 0xA9), // ACC_CONF: ODR=200Hz, OSR=1x
             (0x41, 0x02), // ACC_RANGE: ±12g
-            (0x53, 0x0C), // INT1_IO_CONF: Output, Open-Drain, Active Low
-            (0x58, 0x04), // INT1_INT2_MAP_DATA: Data Ready Interrupt to INT1
         ] {
             utils::T::after_micros(WAIT_IV).await;
             self.write_reg_acc(reg, val).await;
@@ -216,9 +193,6 @@ impl BMI088<'_> {
             if self.read_reg_acc(reg).await != val {
                 return false;
             }
-
-            // let v = self.read_reg_acc(reg).await;
-            // defmt::info!("BMI088 ACC REG {}({}): {}", reg, val, v);
         }
 
         true
