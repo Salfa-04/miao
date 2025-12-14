@@ -8,6 +8,7 @@ mod system;
 
 mod tasks {
     pub mod blinky;
+    pub mod buzzer;
     pub mod health;
 }
 
@@ -22,6 +23,8 @@ async fn entry(s: embassy_executor::Spawner) {
     s.must_spawn(tasks::health::task());
 
     s.must_spawn(tasks::blinky::task(r.blinky));
+
+    s.must_spawn(tasks::buzzer::task(r.buzzer));
 
     s.must_spawn(controller::main());
 }

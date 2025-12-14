@@ -21,7 +21,7 @@ assign_resources! {
 
     buzzer: BuzzerSrc {
         tim_p: TIM12,
-        buzz_pin: PB15,
+        buzz_pin: PB15, // CH2
     }
 
     usb: UsbSrc {
