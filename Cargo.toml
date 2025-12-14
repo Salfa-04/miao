@@ -7,7 +7,7 @@ package.publish = false
 package.authors = ["Salfa Chang <me@salfa.cc>"]
 default-members = ["utils"]
 
-members = ["utils", "blinky", "imu"]
+members = ["utils", "blinky", "imu", "buzzer"]
 
 
 [profile]
