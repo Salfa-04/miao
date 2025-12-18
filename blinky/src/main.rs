@@ -13,11 +13,20 @@ mod tasks {
 
 #[embassy_executor::main]
 async fn entry(s: embassy_executor::Spawner) {
-    let (_c, p) = utils::sys_init();
+    let (mut c, p) = utils::sys_init();
     let r = {
         use system::*;
         split_resources!(p)
     };
+
+    {
+        use utils::peripheral::SCB;
+        let scb = &mut c.SCB;
+        let _ = scb.enable_icache();
+        let i = SCB::icache_enabled();
+        let d = SCB::dcache_enabled();
+        defmt::trace!("ICache: {}, DCache: {}", i, d);
+    }
 
     s.must_spawn(tasks::health::task());
 

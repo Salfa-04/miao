@@ -3,15 +3,22 @@
 //!
 
 use crate::{hal, system::*};
-use hal::gpio::{Pull, Speed};
-use hal::spi::{BitOrder, Config, MODE_0, Spi};
-use hal::time::mhz;
+use gpio::{Pull, Speed};
+use hal::{gpio, spi, time::mhz};
+use spi::{BitOrder, Config, MODE_0, Spi};
+use utils::MemCell;
 
 const SPEED: f32 = 0.3;
+
+#[unsafe(link_section = ".sram4.blinky")]
+static BUFFER: MemCell<[u16; 25]> = MemCell::uninit();
 
 #[embassy_executor::task]
 pub async fn task(p: BlinkySrc) -> ! {
     let mut t = utils::init_ticker!(1);
+
+    // Safety: BUFFER is only used in this task.
+    let buf: _ = unsafe { &mut *BUFFER.init([0; _]) };
 
     let mut config = Config::default();
     config.mode = MODE_0;
@@ -28,7 +35,7 @@ pub async fn task(p: BlinkySrc) -> ! {
         let (r, g, b) = color_wheel(hue as _);
         hue = (hue + SPEED) % 1536.;
 
-        let buf = ws2812_calc(r, g, b);
+        ws2812_calc(buf, r, g, b);
         let _ = led.write(buf).await;
 
         t.next().await
@@ -37,27 +44,18 @@ pub async fn task(p: BlinkySrc) -> ! {
 
 /// # Calculate WS2812 Data Buffer
 /// Prepares the data buffer for WS2812 LED based on RGB values.
-fn ws2812_calc<'t>(r: u8, g: u8, b: u8) -> &'t [u16] {
-    /// Safety: **Only called in Single-Threaded Context.**
-    #[unsafe(link_section = ".sram4.blinky")]
-    static mut BUFFER: [u16; 25] = [0; _];
-    let buf = &raw mut BUFFER;
-
+fn ws2812_calc<'t>(buf: &mut [u16; 25], r: u8, g: u8, b: u8) {
     const N0: u16 = 0b1111_0000_0000_0000; // bit 0
     const N1: u16 = 0b1111_1111_1100_0000; // bit 1
 
-    let mut temp = [0; _];
+    let mut temp = [0; 25];
     for i in 0..8 {
         temp[i + 0] = if (g << i) & 0x80 != 0 { N1 } else { N0 };
         temp[i + 8] = if (r << i) & 0x80 != 0 { N1 } else { N0 };
         temp[i + 16] = if (b << i) & 0x80 != 0 { N1 } else { N0 };
     }
 
-    // Safety: We have a valid pointer to BUFFER here
-    unsafe {
-        buf.write(temp);
-        buf.as_ref().unwrap()
-    }
+    buf.copy_from_slice(&temp[..])
 }
 
 /// # HUE to RGB Conversion

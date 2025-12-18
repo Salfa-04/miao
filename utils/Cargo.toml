@@ -21,7 +21,6 @@ features = ["defmt", "single-bank", "time-driver-tim8", "stm32h723vg", "exti"]
 
 defmt.workspace = true
 
-static_cell     = "2.1"
 embassy-futures = "0.1"
 bitfield-struct = "0.12"
 

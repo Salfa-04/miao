@@ -6,18 +6,20 @@ use crate::system::*;
 use ahrs::{Ahrs, Mahony};
 use libm::{atan2, sqrt};
 use nalgebra::{UnitQuaternion, Vector3};
-use utils::StaticCell;
+use utils::MemCell;
 
 mod typedef;
 
 use typedef::BMI088;
 
 #[unsafe(link_section = ".axisram.imu")]
-static BUFFER: StaticCell<[u8; 16]> = StaticCell::new();
+static BUFFER: MemCell<[u8; 16]> = MemCell::uninit();
 
 #[embassy_executor::task]
 pub async fn task(p: ImuSrc) -> ! {
-    let buffer = BUFFER.init([0; _]);
+    // Safety: BUFFER is only used in this task.
+    let buffer = unsafe { &mut *BUFFER.init([0; _]) };
+
     let mut imu = BMI088::new(p, buffer);
 
     while imu.init().await == false {
