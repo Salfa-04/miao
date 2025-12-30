@@ -18,6 +18,10 @@ x  = "rr --"
 
 [build]
 target = "thumbv7em-none-eabihf"
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# linker = "rust-lld"
+
 rustflags = [
     "-Clinker-plugin-lto",
     "-Clink-arg=--nmagic",
@@ -27,14 +31,12 @@ rustflags = [
     # "-Zmacro-backtrace",
 ]
 
-[target.'cfg(all(target_arch = "arm", target_os = "none"))']
-# linker = "rust-lld"
 runner = [
     "probe-rs",
     # or `attach`
     "run",
     "--preverify",
-    "--no-location",
+    # "--no-location",
     "--no-catch-reset",
     "--no-catch-hardfault",
     "--always-print-stacktrace",
