@@ -48,7 +48,7 @@ mod private {
     pub use super::{Device, WATCH_LIST};
 
     pub use hal::bind_interrupts;
-    pub use hal::{Peri, peripherals};
+    pub use hal::{Peri, interrupt, peripherals};
     pub use time::Ticker;
 
     pub use atomic::Ordering::Relaxed as Order;

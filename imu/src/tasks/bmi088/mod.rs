@@ -43,9 +43,9 @@ pub async fn task(p: ImuSrc) -> ! {
     loop {
         imu.wait_new_data().await;
 
-        // TODO: impl `Constant Temperature Control`: 45°C
-        let temp = imu.read_temp().await;
-        defmt::trace!("BMI088 Temp Data Ready: {:?}", temp);
+        // // TODO: impl `Constant Temperature Control`: 45°C
+        // let temp = imu.read_temp().await;
+        // defmt::trace!("BMI088 Temp Data Ready: {:?}", temp);
 
         let imu: _ = get_imu_data(&mut imu, &mut acc_last).await;
         let (gyro, acc) = imu;
@@ -56,10 +56,10 @@ pub async fn task(p: ImuSrc) -> ! {
             continue;
         };
 
-        // // Output Euler Angles
-        // let (x, y, z) = sta.euler_angles();
-        // let a = (x.to_degrees(), y.to_degrees(), z.to_degrees());
-        // defmt::trace!("Roll={}, Pitch={}, Yaw={}", a.0, a.1, a.2);
+        // Output Euler Angles
+        let (x, y, z) = ahrs.quat.euler_angles();
+        let a = (x.to_degrees(), y.to_degrees(), z.to_degrees());
+        defmt::trace!("Roll={}, Pitch={}, Yaw={}", a.0, a.1, a.2);
     }
 }
 

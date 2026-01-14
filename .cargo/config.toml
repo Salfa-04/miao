@@ -15,9 +15,12 @@ rr = "r -r"
 br = "b -r"
 x  = "rr --"
 
+# xtask = "r -p=xtask --target=host-tuple --"
+
 
 [build]
 target = "thumbv7em-none-eabihf"
+
 
 [target.'cfg(all(target_arch = "arm", target_os = "none"))']
 # linker = "rust-lld"

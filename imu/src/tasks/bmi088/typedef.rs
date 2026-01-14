@@ -1,13 +1,13 @@
 use crate::{hal, system::*};
 use gpio::{Level, Output as OP, Pull, Speed};
 use hal::{exti::ExtiInput, gpio, mode::Async, spi, time::mhz};
-use spi::{BitOrder, Config, MODE_3, Spi};
+use spi::{BitOrder, Config, MODE_3, Spi, mode::Master};
 
 const WAIT_IV: u64 = 150; // us
 const WAIT_RESET: u64 = 50; // ms
 
 pub struct BMI088<'t> {
-    imu: Spi<'t, Async>,
+    imu: Spi<'t, Async, Master>,
     acc_cs: OP<'t>,
     // acc_int: ExtiInput<'t>,
     gyro_cs: OP<'t>,
@@ -22,7 +22,7 @@ impl BMI088<'_> {
         }
 
         // let acc_int = ExtiInput::new(p.acc_int, p.acc_exti, Pull::Up);
-        let gyro_int = ExtiInput::new(p.gyro_int, p.gyro_exti, Pull::Up);
+        let gyro_int = ExtiInput::new(p.gyro_int, p.gyro_exti, Pull::Up, Irqs);
         let acc_cs = OP::new(p.acc_cs, Level::High, Speed::VeryHigh);
         let gyro_cs = OP::new(p.gyro_cs, Level::High, Speed::VeryHigh);
 

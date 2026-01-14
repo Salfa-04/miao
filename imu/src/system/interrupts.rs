@@ -9,5 +9,7 @@ bind_interrupts! {
         // LPUART1 => hal::usart::InterruptHandler<peripherals::LPUART1>;
         // FDCAN1_IT0 => hal::can::IT0InterruptHandler<peripherals::FDCAN1>;
         // FDCAN1_IT1 => hal::can::IT1InterruptHandler<peripherals::FDCAN1>;
+
+        EXTI15_10 => hal::exti::InterruptHandler<interrupt::typelevel::EXTI15_10>;
     }
 }
