@@ -1,0 +1,31 @@
+[workspace]
+resolver = "3"
+
+package.version = "0.0.0"
+package.edition = "2024"
+package.publish = false
+package.authors = ["Salfa Chang <me@salfa.cc>"]
+default-members = []
+
+members = ["dji-frame"]
+
+
+[profile]
+release.lto   = true
+release.debug = false
+
+
+[workspace.dependencies]
+
+
+[workspace.dependencies.log]
+version          = "0.4"
+default-features = false
+[workspace.dependencies.defmt]
+version          = "1.0"
+default-features = false
+
+
+[profile.dev.package]
+log.opt-level   = 3
+defmt.opt-level = 3

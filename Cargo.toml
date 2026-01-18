@@ -6,9 +6,9 @@ package.edition = "2024"
 package.publish = false
 package.authors = ["Salfa Chang <me@salfa.cc>"]
 default-members = ["utils"]
+exclude         = ["crates"]
 
-members = ["utils", "blinky", "imu", "buzzer"]
-
+members = ["utils", "blinky", "imu", "buzzer", "referee"]
 
 [profile]
 # defmt requires `lto = false`

@@ -1,5 +1,5 @@
 [package]
-name  = "buzzer"
+name  = "referee"
 build = "build.rs"
 
 version.workspace = true
@@ -13,6 +13,7 @@ autotests    = false
 
 
 [dependencies]
+dji-frame = { path = "../crates/dji-frame" }
 
 utils.workspace = true
 defmt.workspace = true

@@ -1,10 +1,10 @@
 [package]
 name = "utils"
 
-authors.workspace = true
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+authors.workspace = true
 
 autobenches  = false
 autoexamples = false

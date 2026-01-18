@@ -1,0 +1,21 @@
+[package]
+name = "dji-frame"
+
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+authors.workspace = true
+
+autobenches  = false
+autoexamples = false
+autotests    = false
+
+
+[dependencies]
+log   = { workspace = true, optional = true }
+defmt = { workspace = true, optional = true }
+
+
+[features]
+log   = ["dep:log"]
+defmt = ["dep:defmt"]
